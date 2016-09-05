@@ -1,0 +1,8 @@
+[Core]
+Name = viper
+Module = viper
+   
+[Documentation]
+Description = Viper is a Python application for managing a malware samples repository
+Author = Claudio Guarnieri
+Version = 3.1.4

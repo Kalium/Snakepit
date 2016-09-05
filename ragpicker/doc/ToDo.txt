@@ -1,0 +1,33 @@
+Crawler
+Geodo Tracker: 
+http://gtrack.h3x.eu/corpus/120
+http://gtrack.h3x.eu/corpus/122
+
+http://malwareurls.joxeankoret.com/grayarea.txt
+http://malwareurls.joxeankoret.com/normal.txt
+
+_________________________________________________________________________________________________________________
+
+
+rtf-shellcode-carv.py
+        
+_________________________________________________________________________________________________________________
+
+        
+# If not enough free disk space is available, then we print an
+# error message and wait another round (this check is ignored
+# when the freespace configuration variable is set to zero).
+import os
+import sys
+
+if __name__ == '__main__':
+    FREE_SPACE = 1024 #MB
+    
+    dir_stats = os.statvfs("/opt/")
+    # Calculate the free disk space in megabytes.
+    space_available = dir_stats.f_bavail * dir_stats.f_frsize
+    space_available /= 1024 * 1024
+    
+    if space_available < FREE_SPACE:
+        sys.stderr.write("Not enough free disk space! (Only %d MB!)" % space_available)
+        sys.exit() 
