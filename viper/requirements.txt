@@ -3,7 +3,7 @@ SQLAlchemy==1.0.11
 beautifulsoup4==4.4.1
 bitstring==3.1.4
 bottle==0.12.9
-cffi==1.5.0
+cffi>=1.5.0
 dnspython==1.12.0
 enum34==1.1.2
 idna==2.0
@@ -30,6 +30,6 @@ six==1.10.0
 terminaltables==2.1.0
 virustotal-api==1.1.2
 pefile==2016.3.28
-git+https://github.com/smarnach/pyexiftool.git#egg=pyexiftool
-git+https://github.com/crackinglandia/pype32.git#egg=pype32
-git+https://github.com/pyca/cryptography.git#egg=cryptography
+cryptography==1.5
+git+https://github.com/smarnach/pyexiftool.git@v0.2.0#egg=pyexiftool
+git+https://github.com/crackinglandia/pype32.git@10226d54075076c9bd883b8e1b5318d36c626474#egg=pype32
