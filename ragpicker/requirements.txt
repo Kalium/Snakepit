@@ -1,0 +1,16 @@
+beautifulsoup
+bitstring
+hachoir-core
+hachoir-parser
+hachoir-regex
+hachoir-subfile
+httplib2
+Jinja2
+jsonpickle
+m2crypto
+prettytable
+pyasn1
+pymongo==2.7.2
+requests
+simplejson
+yapsy

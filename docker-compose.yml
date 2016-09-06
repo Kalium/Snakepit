@@ -19,5 +19,7 @@ services:
       - "5556:8080"
     depends_on:
       - db
-  # celery:
-  # ragpicker:
+  ragpicker:
+    build: ./ragpicker
+    depends_on:
+      - viper
