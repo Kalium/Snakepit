@@ -33,3 +33,4 @@ pefile==2016.3.28
 cryptography==1.5
 git+https://github.com/smarnach/pyexiftool.git@v0.2.0#egg=pyexiftool
 git+https://github.com/crackinglandia/pype32.git@10226d54075076c9bd883b8e1b5318d36c626474#egg=pype32
+psycopg2

@@ -4,12 +4,20 @@ services:
     image: redis:latest
   db:
     image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: viper
+      POSTGRES_USER: viper
   flower:
     build: ./docker-flower
     depends_on:
       - redis
     ports:
      - "5555:5555"
+  viper:
+    build: ./viper
+    ports:
+      - "5556:8080"
+    depends_on:
+      - db
   # celery:
-  # viper:
   # ragpicker:
