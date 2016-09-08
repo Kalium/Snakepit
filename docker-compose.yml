@@ -28,3 +28,9 @@ services:
     build: ./ragpicker
     depends_on:
       - viper
+  swagger:
+    image: schickling/swagger-ui:latest
+    environment:
+      API_URL: http://localhost:5000/swagger.json
+    ports:
+      - "5557:80"
