@@ -26,6 +26,8 @@ services:
       - viper-db
   ragpicker:
     build: ./ragpicker
+    environment:
+      BROKER_URL: redis://redis:6379/0
     depends_on:
       - viper
   pit:
