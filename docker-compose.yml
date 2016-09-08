@@ -28,9 +28,19 @@ services:
     build: ./ragpicker
     depends_on:
       - viper
+  pit:
+    build: ./pit
+    environment:
+      PIT_DB: postgresql://pit:pit@pit-db:5432/pit
+    depends_on:
+      - pit-db
+    ports:
+      - "5558:5000"
   swagger:
     image: schickling/swagger-ui:latest
+    depends_on:
+      - pit
     environment:
-      API_URL: http://localhost:5000/swagger.json
+      API_URL: http://localhost:5558/swagger.json
     ports:
       - "5557:80"

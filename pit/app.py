@@ -34,8 +34,8 @@ class Analysis(db.Model):
     item = db.relationship("Item")
     data = db.Column(JSON)
 
-manager.create_api(Item, methods=['GET', 'POST', 'DELETE'])
-manager.create_api(Analysis, methods=['GET', 'POST', 'DELETE'])
+manager.create_api(Item, methods=['GET', 'POST', 'DELETE', 'PATCH'])
+manager.create_api(Analysis, methods=['GET', 'POST', 'DELETE', 'PATCH'])
 
 if __name__ == '__main__':
     db.create_all()
