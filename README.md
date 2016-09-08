@@ -24,7 +24,7 @@ Access Things:
 * Pit is on port 5558.
 
 At this point you'll have to run the ragpicker container yourself.
-I suggest mounting a volume and feeding it files.
+I suggest mounting a volume and feeding it directories.
 
 Licensing:
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
