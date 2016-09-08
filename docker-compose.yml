@@ -2,13 +2,18 @@ version: '2'
 services:
   redis:
     image: redis:latest
-  db:
+  viper-db:
     image: postgres:latest
     environment:
       POSTGRES_PASSWORD: viper
       POSTGRES_USER: viper
+  pit-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: pit
+      POSTGRES_USER: pit
   flower:
-    build: ./docker-flower
+    build: ./flower
     depends_on:
       - redis
     ports:
@@ -18,7 +23,7 @@ services:
     ports:
       - "5556:8080"
     depends_on:
-      - db
+      - viper-db
   ragpicker:
     build: ./ragpicker
     depends_on:
