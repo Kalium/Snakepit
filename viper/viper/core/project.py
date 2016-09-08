@@ -17,8 +17,8 @@ class Project(object):
             self.path = os.path.join(os.getenv('HOME'), '.viper')
 
         if not os.path.exists(self.path):
-            os.makedirs(self.path)
-        
+            os.makedirs(os.path.realpath(os.path.normpath(self.path)))
+
     def open(self, name):
         if cfg.paths.storage_path:
             base_path = cfg.paths.storage_path
