@@ -8,4 +8,4 @@ RUN cd /app/viper && make install
 ADD viper.conf /etc/viper/viper.conf
 
 EXPOSE 8080
-CMD python /app/viper/viper-api -H 0.0.0.0
+CMD sleep 5 && python /app/viper/viper-api -H 0.0.0.0
