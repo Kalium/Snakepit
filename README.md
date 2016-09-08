@@ -26,6 +26,10 @@ Access Things:
 At this point you'll have to run the ragpicker container yourself.
 I suggest mounting a volume and feeding it files.
 
+Licensing:
+Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
+Pit, and the organizational work in this repo, are MIT licensed.
+
 TODO:
 Create celery job runner.
 Give celery job runner some example jobs.
