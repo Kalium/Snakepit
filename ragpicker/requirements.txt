@@ -14,3 +14,4 @@ pymongo==2.7.2
 requests
 simplejson
 yapsy
+celery[redis]

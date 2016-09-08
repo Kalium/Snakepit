@@ -5,4 +5,4 @@ RUN pip install --upgrade pip
 ADD . /app/ragpicker/
 RUN pip install -r /app/ragpicker/requirements.txt
 
-CMD cd /app/ragpicker && python /app/ragpicker/ragpicker.py -i
+CMD cd /app/ragpicker && sleep 5 && python /app/ragpicker/ragpicker.py -p 1 -d /app/ragpicker/tools/

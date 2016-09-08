@@ -17,63 +17,64 @@ VIPER_URL_FIND = "http://%s:%s/file/find"
 log = logging.getLogger("ViperHandler")
 
 class ViperHandler():
-    
+
     def __init__(self):
         self.cfgReporting = Config(os.path.join(RAGPICKER_ROOT, 'config', 'reporting.conf'))
         self.viperEnabled = self.cfgReporting.getOption("viper", "enabled")
         self.host = self.cfgReporting.getOption("viper", "host")
         self.port = self.cfgReporting.getOption("viper", "port")
-        
+
         if not self.host or not self.port:
             raise Exception("Viper REST API server not configurated")
-    
+
     def upload(self, filePath, fileName, tags):
         rawFile = open(filePath, 'rb')
         log.debug(VIPER_URL_ADD % (self.host, self.port) + " file=" + fileName)
-        
-        try:                
+
+        try:
             form = MultiPartForm()
             form.add_file('file', fileName, fileHandle=rawFile)
             form.add_field('tags', tags)
-            
+
             request = urllib2.Request(VIPER_URL_ADD % (self.host, self.port))
             body = str(form)
             request.add_header('Content-type', form.get_content_type())
             request.add_header('Content-length', len(body))
             request.add_data(body)
-            
-            response_data = urllib2.urlopen(request, timeout=60).read() 
-            reponsejson = json.loads(response_data)           
-            log.info("Submitted to Viper, message: %s", reponsejson["message"])   
+
+            response_data = urllib2.urlopen(request, timeout=60).read()
+            reponsejson = json.loads(response_data)
+            log.info("Submitted to Viper, message: %s", reponsejson["message"])
         except urllib2.URLError as e:
             raise Exception("Unable to establish connection to Viper REST API server: %s" % e)
         except urllib2.HTTPError as e:
-            raise Exception("Unable to perform HTTP request to Viper REST API server (http code=%s)" % e) 
+            raise Exception("Unable to perform HTTP request to Viper REST API server (http code=%s)" % e)
         except ValueError as e:
             raise Exception("Unable to convert response to JSON: %s" % e)
-        
+
         if reponsejson["message"] != 'added':
             raise Exception("Failed to store file in Viper: %s" % reponsejson["message"])
-        
+
     # Exports malware file from the Viper using the sha256-hash
     def exportViper(self, sha256, exportDir):
         if os.path.isfile(exportDir + sha256):
-            raise Exception("File %s already exists.") 
-        
+            raise Exception("File %s already exists.")
+
         cmd = "wget -q --tries=1 --directory-prefix=%s 'http://%s:%s/file/get/%s'" % (exportDir, self.host, self.port, sha256)
         os.system(cmd)
-    
+
         if not os.path.isfile(exportDir + sha256):
             raise Exception("Download %s failed." % sha256)
-        
+
     def isFileInCage(self, md5=None, sha256=None):
         if md5:
             param = { 'md5': md5 }
         elif sha256:
             param = { 'sha256': sha256 }
-        
+        param['project'] = 'default'
+
         request_data = urllib.urlencode(param)
-    
+
         try:
             request = urllib2.Request(VIPER_URL_FIND % (self.host, self.port), request_data)
             response = urllib2.urlopen(request, timeout=60)
@@ -85,14 +86,15 @@ class ViperHandler():
                 return False
             else:
                 raise Exception("Unable to perform HTTP request to Viper (http code=%s)" % e)
-        except urllib2.URLError as e:    
-            raise Exception("Unable to establish connection to Viper: %s" % e)  
-        
-        try:    
+        except urllib2.URLError as e:
+            raise Exception("Unable to establish connection to Viper: %s" % e)
+
+        try:
             check = json.loads(response_data)
+            check = check['results']
         except ValueError as e:
             raise Exception("Unable to convert response to JSON: %s" % e)
-            
+
         if md5:
             for i in check:
                 if str(i) == "../":
@@ -103,6 +105,8 @@ class ViperHandler():
                             if str(d) == md5:
                                 log.info("File " + md5 + " is in Viper")
                                 return True
+            log.info("File " + sha256 + " is not in Viper")
+            return False
         elif sha256:
             for i in check:
                 if str(i) == "../":
@@ -113,5 +117,7 @@ class ViperHandler():
                             if str(d) == sha256:
                                 log.info("File " + sha256 + " is in Viper")
                                 return True
-        else:
+            log.info("File " + sha256 + " is not in Viper")
             return False
+        else:
+            raise Exception("isFileInCage() invoked without md5 or sha256. Can't do anything.")
