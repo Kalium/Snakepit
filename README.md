@@ -1,5 +1,7 @@
 # Snakepit
 
+Snakepit is a docker-enabled framework for analysis and triage of binaries in a networked environment. It's designed for the easy addition of whatever tools you want to use. There's an example called "fileLength" demonstrating analysis.
+
 Notes:
 * No oletools in viper. Not a big loss here.
 * At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
