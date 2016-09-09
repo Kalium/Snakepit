@@ -6,6 +6,8 @@ Notes:
 Using:
 * `docker-compose build`
 * `docker-compose up`
+* Direct your browser to http://localhost:5555/tasks to see what work has been done.
+* Use Swagger at http://localhost:5557/ to poke at the API.
 
 Components:
 * redis - This is the job queue.
@@ -14,8 +16,9 @@ Components:
 * flower - A management UI for Celery.
 * viper - A storage and management system for binaries.
 * ragpicker - A binary ingestion system.
-* pit - An API for storing and retrieving analysis results and binary parent/child relationships.
-* swagger - A system for viewing API documentation. In this case pit's.
+* pit - An API for storing and retrieving analysis results and binary parent/child relationships. Minimal logic, could be put behind a load-balancer.
+* swagger - A system for viewing API documentation. Pit's mostly works.
+* snake - A bare-bones framework for doing asynchronous analysis tasks. Stores its results in pit. Designed to be run in clusters.
 
 Access Things:
 * Flower binds to port 5555.
@@ -23,13 +26,9 @@ Access Things:
 * Swagger is on port 5557. By default it shows pit's docs.
 * Pit is on port 5558.
 
-At this point you'll have to run the ragpicker container yourself.
-I suggest mounting a volume and feeding it directories.
+Notes:
+At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 
 Licensing:
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
-Pit, and the organizational work in this repo, are MIT licensed.
-
-TODO:
-Create celery job runner.
-Give celery job runner some example jobs.
+Pit, Snake, and the organizational work in this repo, are MIT licensed.
