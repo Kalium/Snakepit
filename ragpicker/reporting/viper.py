@@ -10,8 +10,9 @@ from core.abstracts import Report
 from celery import Celery
 
 app = Celery('tasks', broker=os.getenv('BROKER_URL'))
+app.conf.CELERY_TASK_SERIALIZER = 'json'
 
-@app.task(name="snakepit.start")
+@app.task(name="snakepit.start", serializer='json')
 def start(sha256):
     pass
 
