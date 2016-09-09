@@ -10,7 +10,7 @@ Using:
 * `docker-compose build`
 * `docker-compose up`
 * Direct your browser to http://localhost:5555/tasks to see what work has been done.
-* Use Swagger at http://localhost:5557/ to poke at the API.
+* Use Swagger at http://localhost:5557/ to poke at pit's API.
 
 Components:
 * redis - This is the job queue.
@@ -19,7 +19,7 @@ Components:
 * flower - A management UI for Celery.
 * viper - A storage and management system for binaries.
 * ragpicker - A binary ingestion system.
-* pit - An API for storing and retrieving analysis results and binary parent/child relationships. Minimal logic, could be put behind a load-balancer.
+* pit - An API for storing and retrieving analysis results and binary parent/child relationships. Minimal logic, could be put behind a load-balancer with several instances.  Items are identified by SHA256. Items may have a parent. Analysis data are identified by SHA256 of the item and the key (read: name of analysis job) of the datum.
 * swagger - A system for viewing API documentation. Pit's mostly works.
 * snake - A bare-bones framework for doing asynchronous analysis tasks. Stores its results in pit. Designed to be run in clusters.
 

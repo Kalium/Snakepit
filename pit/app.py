@@ -23,8 +23,8 @@ manager = APIManager(app, flask_sqlalchemy_db=db)
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.Unicode, unique=True)
-    parent_id = db.Column(db.Integer, db.ForeignKey("item.id"))
-    parent = db.relationship("Item", backref="children", remote_side=[id])
+    parent_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
+    parent = db.relationship("Item", backref="children", remote_side=[hash])
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(),
                            onupdate=db.func.now())
@@ -39,6 +39,7 @@ class Analysis(db.Model):
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(),
                            onupdate=db.func.now())
+    db.UniqueConstraint('key', 'item_hash')
 
 manager.create_api(Item, primary_key='hash', methods=['GET', 'POST', 'DELETE',
                    'PATCH'], url_prefix='')
