@@ -2,6 +2,7 @@
 
 Notes:
 * No oletools in viper. Not a big loss here.
+* At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 
 Using:
 * `docker-compose build`
@@ -25,9 +26,6 @@ Access Things:
 * Viper API is on port 5556.
 * Swagger is on port 5557. By default it shows pit's docs.
 * Pit is on port 5558.
-
-Notes:
-At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 
 Licensing:
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
