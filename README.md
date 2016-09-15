@@ -1,10 +1,11 @@
 # Snakepit
 
-Snakepit is a docker-enabled framework for analysis and triage of binaries in a networked environment. It's designed for the easy addition of whatever tools you want to use. There's an example called "fileLength" demonstrating analysis.
+Snakepit is a docker-enabled framework for analysis and triage of binaries in a networked environment. It's designed for the easy addition of whatever tools you want to use. Analysis functionality is added in snake.
 
 Notes:
+* Added a small API CLI tool for Viper which should come in use since we aren't running the web interface.
 * No oletools in viper. Not a big loss here.
-* At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
+* At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this. Soon to prop something up to await commands.
 
 Using:
 * `docker-compose build`
