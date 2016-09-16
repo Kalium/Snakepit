@@ -32,3 +32,6 @@ Access Things:
 Licensing:
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
 Pit, Snake, and the organizational work in this repo, are MIT licensed.
+
+TODO:
+* Scorer. This requires a rules engine and a service to offer them up.
