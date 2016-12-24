@@ -68,7 +68,8 @@ def getDataByHash(sha256):
     # Grabs the data from the initial static analysis done by ragpicker
     # and Viper, then adds it to snakes data section
     payload = {'sha256': sha256}
-    resp = requests.post(viper_url + "file/find", payload, headers=post_headers)
+    resp = requests.post(viper_url + "file/find", payload,
+                         headers=post_headers)
     resp.raise_for_status()
     result = resp.json()
     data = {}
