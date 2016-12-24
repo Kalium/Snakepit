@@ -36,14 +36,37 @@ class Analysis(db.Model):
     item_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
     item = db.relationship("Item", backref=db.backref("data", lazy='dynamic'))
     data = db.Column(JSON)
+    score = db.Column(db.Integer)
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(),
                            onupdate=db.func.now())
     db.UniqueConstraint('key', 'item_hash')
 
-manager.create_api(Item, primary_key='hash', methods=['GET', 'POST', 'DELETE',
-                   'PATCH'], url_prefix='')
+
+class Rule(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    matcher = db.Column(db.Unicode)
+
+    # NB: Value can be negative...
+    value = db.Column(db.Unicode)
+
+    # This is the key that ties it to analysis data.
+    analysis_key = db.Column(db.Unicode)
+
+    # This is the key used to identify the rule uniquely.
+    rule_key = db.Column(db.Unicode)
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(),
+                           onupdate=db.func.now())
+
+
+manager.create_api(Item, primary_key='hash',
+                   methods=['GET', 'POST', 'DELETE', 'PATCH'],
+                   url_prefix='')
 manager.create_api(Analysis, methods=['GET', 'POST', 'DELETE', 'PATCH'],
+                   url_prefix='')
+manager.create_api(Rule, primary_key="analysis_key",
+                   methods=['GET', 'POST', 'DELETE', 'PATCH'],
                    url_prefix='')
 db.create_all()
 

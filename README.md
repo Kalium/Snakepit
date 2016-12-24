@@ -22,6 +22,7 @@ Components:
 * pit - An API for storing and retrieving analysis results and binary parent/child relationships. Minimal logic, could be put behind a load-balancer with several instances.  Items are identified by SHA256. Items may have a parent. Analysis data are identified by SHA256 of the item and the key (read: name of analysis job) of the datum.
 * swagger - A system for viewing API documentation. Pit's mostly works.
 * snake - A bare-bones framework for doing asynchronous analysis tasks. Stores its results in pit. Designed to be run in clusters.
+* handler - A scorer, driven by rules served by pit.
 
 Access Things:
 * Flower binds to port 5555.

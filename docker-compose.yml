@@ -48,6 +48,16 @@ services:
       - redis
       - pit
       - viper
+  handler:
+      build: ./handler
+      environment:
+        BROKER_URL: redis://redis:6379/0
+        PIT_URL: http://pit:5000/
+        VIPER_URL: http://viper:8080/
+      depends_on:
+        - redis
+        - pit
+        - viper
   swagger:
     image: schickling/swagger-ui:latest
     depends_on:

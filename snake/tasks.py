@@ -5,6 +5,8 @@ from celery import Celery
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')
+app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
+                        'snakepit.scoring.*': {'queue': 'scoring'}}
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
 post_headers = {'Accept': 'application/json',
@@ -32,8 +34,17 @@ def saveAnalysis(sha256, key, data):
                          headers=post_headers)
     resp.raise_for_status()
 
+    # Analysis saved. Now trigger scoring job.
+    ret = json.loads(resp.content)
+    triggerScoring.delay(ret['id'])
 
-@app.task(name="snakepit.start")
+
+@app.task(name="snakepit.scoring.score")
+def triggerScoring(analysis_id):
+    pass
+
+
+@app.task(name="snakepit.analysis.start")
 def fanout(sha256):
     # throwInPit can be done by a worker
     # but we want it as a general precursor to ensure
@@ -52,7 +63,7 @@ def throwInPit(sha256):
     resp.raise_for_status()
 
 
-@app.task(throws=(requests.HTTPError))
+@app.task(name="snakepit.analysis.fileLength", throws=(requests.HTTPError))
 def fileLength(sha256):
     resp = requests.get(viper_url + "file/get/" + sha256)
     resp.raise_for_status()
