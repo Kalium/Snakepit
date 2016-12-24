@@ -50,7 +50,7 @@ def fanout(sha256):
     # but we want it as a general precursor to ensure
     # that the object is there before we start creating children
     throwInPit(sha256)
-    fileLength.delay(sha256)
+    getDataByHash.delay(sha256)
 
 
 @app.task(throws=(requests.HTTPError))
@@ -63,10 +63,14 @@ def throwInPit(sha256):
     resp.raise_for_status()
 
 
-@app.task(name="snakepit.analysis.fileLength", throws=(requests.HTTPError))
-def fileLength(sha256):
-    resp = requests.get(viper_url + "file/get/" + sha256)
+@app.task(throws=(requests.HTTPError))
+def getDataByHash(sha256):
+    # Grabs the data from the initial static analysis done by ragpicker
+    # and Viper, then adds it to snakes data section
+    payload = {'sha256': sha256}
+    resp = requests.post(viper_url + "file/find", payload, headers=post_headers)
     resp.raise_for_status()
-    size = len(resp.content)
-    saveAnalysis(sha256=sha256, key="fileLength",
-                 data=json.dumps({"length": size}))
+    result = resp.json()
+    data = {}
+    data = result['results']['default']
+    saveAnalysis(sha256=sha256, key="getDataByHash", data=data)
