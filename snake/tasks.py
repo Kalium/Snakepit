@@ -63,7 +63,7 @@ def throwInPit(sha256):
     resp.raise_for_status()
 
 
-@app.task(throws=(requests.HTTPError))
+@app.task(name="snakepit.analysis.getDataByHash", throws=(requests.HTTPError))
 def getDataByHash(sha256):
     # Grabs the data from the initial static analysis done by ragpicker
     # and Viper, then adds it to snakes data section
