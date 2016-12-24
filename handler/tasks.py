@@ -26,10 +26,12 @@ def getAnalysis(analysis_id):
 
 
 def getRules(analysis_key):
-    resp = requests.get('/'.join([pit_url, 'rules', analysis_key]))
+    resp = requests.get('/'.join([pit_url, 'rule', analysis_key]))
 
     if resp.status_code == 200:
         rules = json.loads(resp.content)
+        if not isinstance(rules, list):
+            rules = [rules]
     else:
         rules = []
     return rules
@@ -38,8 +40,8 @@ def getRules(analysis_key):
 def evaluateRules(analysis, rules):
     score = 0
     for rule in rules:
-        if re.match(rule['matcher'], analysis['data']):
-            score = score + rule['value']
+        if re.match(rule['matcher'], str(analysis['data'])):
+            score = score + int(rule['value'])
     return score
 
 
@@ -48,8 +50,8 @@ def saveScore(analysis_id, score):
     a['id'] = analysis_id
     a['score'] = score
 
-    resp = requests.patch('/'.join([pit_url, 'analysis']), data=json.dumps(a),
-                          headers=post_headers)
+    resp = requests.patch('/'.join([pit_url, 'analysis', str(analysis_id)]),
+                          data=json.dumps(a), headers=post_headers)
     resp.raise_for_status()
 
 
@@ -63,6 +65,7 @@ def score(analysis_id):
     analysis = getAnalysis(analysis_id)
     rules = getRules(analysis['key'])
     score = evaluateRules(analysis, rules)
+
     if score != 0:
         saveScore(analysis_id, score)
     return None

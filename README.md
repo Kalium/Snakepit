@@ -36,4 +36,4 @@ Ragpicker, Viper, Flower, Celery and assorted Python packages are all under thei
 Pit, Snake, and the organizational work in this repo, are MIT licensed.
 
 TODO:
-* Scorer. This requires a rules engine and a service to offer them up.
+* A scorer that doesn't suck and isn't based on regexen. I hate regexes, but it's all I can think of right now.
