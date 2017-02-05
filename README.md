@@ -33,7 +33,7 @@ Access Things:
 
 Licensing:
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
-Pit, Snake, and the organizational work in this repo, are MIT licensed.
+Pit, Snake, handler, and the organizational work in this repo, are MIT licensed.
 
 TODO:
 * A scorer that doesn't suck and isn't based on regexen. I hate regexes, but it's all I can think of right now.
