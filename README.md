@@ -1,7 +1,7 @@
 # Snakepit
 
 ## About
-Snakepit is a docker-enabled framework for analysis and triage of binaries in a networked environment. It's designed for the easy addition of whatever tools you want to use. Analysis functionality is added in snake, so plugins go there. Scoring and rules are handled in handler.
+Snakepit is a docker-enabled framework for analysis and triage of binaries in a networked environment. It's designed for the easy addition of whatever tools you want to use. Analysis functionality is added in snake. Scoring and rules are handled in handler. As a result, plugins are split between snake and handler.
 
 ## Why
 We all need hobbies.
@@ -9,7 +9,7 @@ We all need hobbies.
 ## Notes
 * Added a small API CLI tool for Viper which should come in use since we aren't running the web interface.
 * No oletools in viper. Not a big loss here.
-* At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this. Soon to prop something up to await commands.
+* At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 * Resetting a score for re-analysis is left as an exercise. handler's `saveScore` shows how to do it.
 
 ## Using
@@ -44,7 +44,7 @@ We all need hobbies.
 
 ## Licensing
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
-Pit, Snake, handler, and the organizational work in this repo, are MIT licensed.
+Pit, snake, handler, and the organizational work in this repo, are MIT licensed.
 
 ## TODO
-* A scorer that doesn't suck and isn't based on regexen. I hate regexe. They're all I can think of that isn't eval().
+* A scorer that doesn't suck and isn't based on regexen. I hate regexen. They're also all I can think of that isn't eval().
