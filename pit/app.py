@@ -1,3 +1,10 @@
+"""
+This is the Centralized pit application.
+
+Pit owns blobs for analysis, the results of the analysis, the rules used to
+score analysis, and serves it all up on demand.
+"""
+
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -21,6 +28,8 @@ manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
 class Item(db.Model):
+    """Blob to be analyzed. Can have parent and children."""
+    
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.Unicode, unique=True)
     parent_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
@@ -31,6 +40,8 @@ class Item(db.Model):
 
 
 class Analysis(db.Model):
+    """Results of analysis. Belongs to an Item."""
+
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Unicode)
     item_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
@@ -44,6 +55,8 @@ class Analysis(db.Model):
 
 
 class Rule(db.Model):
+    """Rules used to score analysis data."""
+
     id = db.Column(db.Integer, primary_key=True)
     matcher = db.Column(db.Unicode)
 

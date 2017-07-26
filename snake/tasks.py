@@ -1,3 +1,10 @@
+"""
+Tasks is responsible for describing the many labors performed by snake.
+
+This file contains the logic for saving blobs, triggering analysis,
+saving analysis data, and handling asynchronous jobs.
+"""
+
 import os
 import requests
 import json
@@ -9,6 +16,7 @@ app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
                         'snakepit.scoring.*': {'queue': 'scoring'}}
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
+cuckoo_url = os.getenv('CUCKOO_URL', 'http://cuckoo:8080/')
 post_headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 
@@ -25,6 +33,11 @@ ANALYSIS_TEMPLATE = {
 
 
 def saveAnalysis(sha256, key, data):
+    """
+    Responsible for writing JSON blobs to pit.
+
+    :rtype: None
+    """
     a = ANALYSIS_TEMPLATE.copy()
     a['item_hash'] = sha256
     a['key'] = key
@@ -41,11 +54,13 @@ def saveAnalysis(sha256, key, data):
 
 @app.task(name="snakepit.scoring.score")
 def triggerScoring(analysis_id):
+    """Celery's placeholder."""
     pass
 
 
 @app.task(name="snakepit.analysis.start")
 def fanout(sha256):
+    """Centralized save-and-do-work function."""
     # throwInPit can be done by a worker
     # but we want it as a general precursor to ensure
     # that the object is there before we start creating children
@@ -55,6 +70,7 @@ def fanout(sha256):
 
 @app.task(throws=(requests.HTTPError))
 def throwInPit(sha256):
+    """Save the blob."""
     i = ITEM_TEMPLATE.copy()
     i['hash'] = sha256
 
@@ -65,8 +81,7 @@ def throwInPit(sha256):
 
 @app.task(name="snakepit.analysis.viperData", throws=(requests.HTTPError))
 def getDataByHash(sha256):
-    # Grabs the data from the initial static analysis done by ragpicker
-    # and Viper, then adds it to snakes data section
+    """Grab all data Viper has. Save."""
     payload = {'sha256': sha256}
     resp = requests.post(viper_url + "file/find", payload,
                          headers=post_headers)
