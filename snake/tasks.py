@@ -33,11 +33,7 @@ ANALYSIS_TEMPLATE = {
 
 
 def saveAnalysis(sha256, key, data):
-    """
-    Responsible for writing JSON blobs to pit.
-
-    :rtype: None
-    """
+    """Responsible for writing JSON blobs to pit."""
     a = ANALYSIS_TEMPLATE.copy()
     a['item_hash'] = sha256
     a['key'] = key
@@ -50,6 +46,11 @@ def saveAnalysis(sha256, key, data):
     # Analysis saved. Now trigger scoring job.
     ret = json.loads(resp.content)
     triggerScoring.delay(ret['id'])
+
+
+def getItem(sha256):
+    """Stub for Celery's sake."""
+    pass
 
 
 @app.task(name="snakepit.scoring.score")
@@ -90,3 +91,16 @@ def getDataByHash(sha256):
     data = {}
     data = result['results']['default']
     saveAnalysis(sha256=sha256, key="viperData", data=data)
+
+
+@app.task(name="snakepit.analysis.cuckoo", throws=(requests.HTTPError))
+def submitToCuckoo(sha256):
+    """Submit to Cuckoo. Kick off waiter for results."""
+    cuckoo_submit_url = "http://{0}/tasks/create/file".format(cuckoo_url)
+    pass
+
+
+@app.task(name="snakepit.analysis.cuckoo.checker", throws=(requests.HTTPError))
+def pollCuckoo(sha256):
+    """Poll Cuckoo for completed analysis."""
+    pass

@@ -1,3 +1,9 @@
+"""
+Tasks is responsible for describing the labors performed by handler.
+
+This file contains the logic for evaluting rules and scoring analysis data.
+"""
+
 import re
 import os
 import requests
@@ -19,6 +25,7 @@ ANALYSIS_TEMPLATE = {
 
 
 def getAnalysis(analysis_id):
+    """Grabs data from pit."""
     resp = requests.get('/'.join([pit_url, 'analysis', str(analysis_id)]))
 
     analysis = json.loads(resp.content)
@@ -26,6 +33,7 @@ def getAnalysis(analysis_id):
 
 
 def getRules(analysis_key):
+    """Grabs rules for evaluation against data from pit."""
     resp = requests.get('/'.join([pit_url, 'rule', analysis_key]))
 
     if resp.status_code == 200:
@@ -38,6 +46,7 @@ def getRules(analysis_key):
 
 
 def evaluateRules(analysis, rules):
+    """Perform evaluation and calculate score totals."""
     score = 0
     for rule in rules:
         if re.match(rule['matcher'], str(analysis['data'])):
@@ -46,6 +55,7 @@ def evaluateRules(analysis, rules):
 
 
 def saveScore(analysis_id, score):
+    """Save calculated score back to pit."""
     a = ANALYSIS_TEMPLATE.copy()
     a['id'] = analysis_id
     a['score'] = score
@@ -62,6 +72,7 @@ def saveScore(analysis_id, score):
 # * Save score to analysis item.
 @app.task(name="snakepit.scoring.score", throws=(requests.HTTPError))
 def score(analysis_id):
+    """Glue together all the helpers to fully score analysis."""
     analysis = getAnalysis(analysis_id)
     rules = getRules(analysis['key'])
     score = evaluateRules(analysis, rules)
