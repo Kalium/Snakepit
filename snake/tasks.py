@@ -8,7 +8,9 @@ saving analysis data, and handling asynchronous jobs.
 import os
 import requests
 import json
+import CuckooAPI
 from celery import Celery
+from urllib.parse import urlparse
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')
@@ -16,7 +18,7 @@ app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
                         'snakepit.scoring.*': {'queue': 'scoring'}}
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
-cuckoo_url = os.getenv('CUCKOO_URL', 'http://cuckoo:8080/')
+cuckoo_url = os.getenv('CUCKOO_HOST', 'http://cuckoo:8080/')
 post_headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 
@@ -49,7 +51,7 @@ def saveAnalysis(sha256, key, data):
 
 
 def getItem(sha256):
-    """Stub for Celery's sake."""
+    """Grab binary from viper."""
     pass
 
 
@@ -93,14 +95,38 @@ def getDataByHash(sha256):
     saveAnalysis(sha256=sha256, key="viperData", data=data)
 
 
-@app.task(name="snakepit.analysis.cuckoo", throws=(requests.HTTPError))
+def getCuckooApiInstance():
+    """Return a functional CuckooAPI instance."""
+    parsed = urlparse(cuckoo_url)
+    return CuckooAPI.CuckooAPI(parsed.hostname, APIPY=True, port=parsed.port)
+
+
+@app.task(name="snakepit.analysis.cuckoo.start", throws=(requests.HTTPError))
 def submitToCuckoo(sha256):
-    """Submit to Cuckoo. Kick off waiter for results."""
-    cuckoo_submit_url = "http://{0}/tasks/create/file".format(cuckoo_url)
-    pass
+    """Submit to Cuckoo. Kick off poller for results."""
+    api = getCuckooApiInstance()
+    url = ''.join([viper_url + "file/get/" + sha256])
+    resp = api.submiturl(url)
+    # return resp['task_id']
+    pollCuckoo.delay(sha256, resp['task_id'])
 
 
-@app.task(name="snakepit.analysis.cuckoo.checker", throws=(requests.HTTPError))
-def pollCuckoo(sha256):
+@app.task(name="snakepit.analysis.cuckoo.poll", throws=(requests.HTTPError))
+def pollCuckoo(sha256, task_id):
     """Poll Cuckoo for completed analysis."""
+    api = getCuckooApiInstance()
+    status = api.taskview(task_id)
+    if status['task']['status'] != 'reported':
+        # It's finished! Time to grab the report.
+        finishCuckoo.delay(sha256, task_id)
+    else:
+        pollCuckoo.delay(sha256, task_id)
+
+
+@app.task(name="snakepit.analysis.cuckoo.finish", throws=(requests.HTTPError))
+def finishCuckoo(sha256, task_id):
+    """Grab finished Cuckoo report. Save."""
+    api = getCuckooApiInstance()
+    report = api.taskreport(task_id)
+    saveAnalysis(sha256, "cuckoo", report)
     pass
