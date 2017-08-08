@@ -29,12 +29,13 @@ class Project(object):
             raise Exception("The local storage folder does not exist at path {}".format(
                 base_path))
 
-        if name == 'default':
+        if name in ['default', '.', '..', '']:
+            name = 'default'
             path = base_path
         else:
             path = os.path.join(base_path, 'projects', name)
-            if not os.path.exists(path):
-                os.makedirs(path)
+            if not os.path.exists(os.path.abspath(path)):
+                os.makedirs(os.path.abspath(path))
 
         self.name = name
         self.path = path

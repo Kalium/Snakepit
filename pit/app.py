@@ -1,3 +1,10 @@
+"""
+This is the Centralized pit application.
+
+Pit owns blobs for analysis, the results of the analysis, the rules used to
+score analysis, and serves it all up on demand.
+"""
+
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -21,6 +28,8 @@ manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
 class Item(db.Model):
+    """Blob to be analyzed. Can have parent and children."""
+
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.Unicode, unique=True)
     parent_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
@@ -31,19 +40,46 @@ class Item(db.Model):
 
 
 class Analysis(db.Model):
+    """Results of analysis. Belongs to an Item."""
+
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Unicode)
     item_hash = db.Column(db.Unicode, db.ForeignKey("item.hash"))
     item = db.relationship("Item", backref=db.backref("data", lazy='dynamic'))
     data = db.Column(JSON)
+    score = db.Column(db.Integer)
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(),
                            onupdate=db.func.now())
     db.UniqueConstraint('key', 'item_hash')
 
-manager.create_api(Item, primary_key='hash', methods=['GET', 'POST', 'DELETE',
-                   'PATCH'], url_prefix='')
+
+class Rule(db.Model):
+    """Rules used to score analysis data."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    matcher = db.Column(db.Unicode)
+
+    # NB: Value can be negative...
+    value = db.Column(db.Unicode)
+
+    # This is the key that ties it to analysis data.
+    analysis_key = db.Column(db.Unicode)
+
+    # This is the key used to identify the rule uniquely.
+    rule_key = db.Column(db.Unicode)
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(),
+                           onupdate=db.func.now())
+
+
+manager.create_api(Item, primary_key='hash',
+                   methods=['GET', 'POST', 'DELETE', 'PATCH'],
+                   url_prefix='')
 manager.create_api(Analysis, methods=['GET', 'POST', 'DELETE', 'PATCH'],
+                   url_prefix='')
+manager.create_api(Rule, primary_key="analysis_key",
+                   methods=['GET', 'POST', 'DELETE', 'PATCH'],
                    url_prefix='')
 db.create_all()
 
