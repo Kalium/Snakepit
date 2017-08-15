@@ -8,4 +8,5 @@ RUN cd /app/viper && make install
 COPY viper.conf /etc/viper/viper.conf
 
 EXPOSE 8080
-CMD rm -rf /app/data/binaries/* && sleep 5 && python /app/viper/viper-api -H 0.0.0.0
+EXPOSE 9090
+CMD rm -rf /app/data/binaries/* && sleep 5 && python /app/viper/viper-api -H 0.0.0.0 && python /app/viper/viper-web -H 0.0.0.0 -p 9090

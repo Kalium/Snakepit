@@ -62,14 +62,14 @@ class YaraScan(Module):
         # TODO: this regenerates the file at every run, perhaps we
         # could find a way to optimize this.
         def rule_index():
-            tmp_path = os.path.join(tempfile.gettempdir(), 'index.yara')
+            tmp_path = os.path.join(tempfile.gettempdir(), 'index.yar')
             with open(tmp_path, 'w') as rules_index:
                 for rule_file in os.listdir(self.rule_path):
                     # Skip if the extension is not right, could cause problems.
                     if not rule_file.endswith('.yar') and not rule_file.endswith('.yara'):
                         continue
                     # Skip if it's the index itself.
-                    if rule_file == 'index.yara':
+                    if rule_file == 'index.yar':
                         continue
 
                     # Add the rule to the index.
