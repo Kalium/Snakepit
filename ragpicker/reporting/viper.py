@@ -10,9 +10,10 @@ from core.abstracts import Report
 from celery import Celery
 
 app = Celery('tasks', broker=os.getenv('BROKER_URL'))
-app.conf.CELERY_TASK_SERIALIZER = 'json'
+app.conf.task_serializer = 'json'
+app.conf.task_default_queue = 'analysis'
 
-@app.task(name="snakepit.start", serializer='json')
+@app.task(name="snakepit.analysis.start", serializer='json')
 def start(sha256):
     pass
 
