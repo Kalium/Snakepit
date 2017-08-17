@@ -11,7 +11,6 @@ import json
 import CuckooAPI
 import time
 from celery import Celery
-#from urllib.parse import urlparse
 from urlparse import urlparse
 
 app = Celery('tasks', )
@@ -20,7 +19,7 @@ app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
                         'snakepit.scoring.*': {'queue': 'scoring'}}
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
-cuckoo_url = os.getenv('CUCKOO_HOST', 'http://cuckoo:8080/')
+cuckoo_url = os.getenv('CUCKOO_HOST', '')
 post_headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 cuckoo_user = os.getenv('CUCKOO_USER', None)
@@ -75,6 +74,7 @@ def fanout(sha256):
     getDataByHash.delay(sha256)
     submitToCuckoo.delay(sha256)
 
+
 @app.task(throws=(requests.HTTPError))
 def throwInPit(sha256):
     """Save the blob."""
@@ -101,9 +101,13 @@ def getDataByHash(sha256):
 
 def getCuckooApiInstance():
     """Return a functional CuckooAPI instance."""
+    # Bail if cuckoo not configured.
+    if not cuckoo_url:
+        return
     parsed = urlparse(cuckoo_url)
-    if cuckoo_pass != None:
-        return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https", user=cuckoo_user, passwd=cuckoo_pass)
+    if cuckoo_pass is not None:
+        return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https",
+                                   user=cuckoo_user, passwd=cuckoo_pass)
     else:
         return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https")
 
@@ -122,8 +126,6 @@ def submitToCuckoo(sha256):
 
     api = getCuckooApiInstance()
     resp = api.submitfile(sha256)
-    print resp
-    print resp['data']['task_ids']
     # return resp['task_id']
     pollCuckoo.delay(sha256, resp['data']['task_ids'])
 

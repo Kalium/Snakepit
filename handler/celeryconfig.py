@@ -1,3 +1,4 @@
+"""Responsible for configuring and routing this Celery worker."""
 import os
 
 CELERY_IMPORTS = ('tasks', )

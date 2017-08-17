@@ -11,6 +11,7 @@ We all need hobbies.
 * No oletools in viper. Not a big loss here.
 * At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 * Resetting a score for re-analysis is left as an exercise. handler's `saveScore` shows how to do it.
+* Plz no step on snek.
 
 ## Using
 * `docker-compose build`
@@ -21,7 +22,7 @@ We all need hobbies.
 ## Components
 
 ### Storage
-* redis - This is where the Celery job queue lives.
+* redis - This is where the Celery job queues live.
 * viper-db - A postgres database that backs the Viper binary storage system.
 * pit-db - A postgres database that backs the pit data storage API.
 
@@ -36,11 +37,12 @@ We all need hobbies.
 * snake - A bare-bones framework for doing asynchronous analysis tasks. Stores its results in pit. Designed to be run in clusters.
 * handler - A scorer, driven by rules served by pit.
 
-## Accessing Things
+## Accessing Things From Outside Docker
 * Flower binds to port 5555.
 * Viper API is on port 5556.
 * Swagger is on port 5557. By default it shows pit's docs.
 * Pit is on port 5558.
+* Viper Web is on port 5559.
 
 ## Licensing
 Ragpicker, Viper, Flower, Celery and assorted Python packages are all under their own licenses.
