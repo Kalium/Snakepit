@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-RUN apt-get update && apt-get install -y python-pip git python-dev libssl-dev
+RUN apt-get update && apt-get install -y python-pip git python-dev libssl1.0-dev
 RUN pip install --upgrade pip
 
 COPY . /app/ragpicker/
