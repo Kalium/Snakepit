@@ -28,7 +28,7 @@ manager = APIManager(app, flask_sqlalchemy_db=db)
 
 
 class Item(db.Model):
-    """Blob to be analyzed. Can have parent and children."""
+    """Blob to be analyzed. Can have parent and children. Demands uniqueness."""
 
     id = db.Column(db.Integer, primary_key=True)
     hash = db.Column(db.Unicode, unique=True)
