@@ -1,14 +1,24 @@
-version: '2'
+version: '2.1'
 services:
   redis:
     image: redis:latest
   viper-db:
     image: postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_PASSWORD: viper
       POSTGRES_USER: viper
   pit-db:
     image: postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_PASSWORD: pit
       POSTGRES_USER: pit
@@ -23,7 +33,8 @@ services:
     ports:
       - "5556:8080"
     depends_on:
-      - viper-db
+      viper-db:
+        condition: service_healthy
   ragpicker:
     build: ./ragpicker
     environment:
@@ -35,7 +46,8 @@ services:
     environment:
       PIT_DB: postgresql://pit:pit@pit-db:5432/pit
     depends_on:
-      - pit-db
+      pit-db:
+        condition: service_healthy
     ports:
       - "5558:5000"
   snake:

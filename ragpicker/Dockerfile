@@ -6,4 +6,4 @@ COPY requirements.txt /app/ragpicker/requirements.txt
 RUN pip install -r /app/ragpicker/requirements.txt
 COPY . /app/ragpicker/
 
-CMD cd /app/ragpicker && sleep 7 && python /app/ragpicker/ragpicker.py -p 1 -d /app/ragpicker/tools/
+CMD cd /app/ragpicker && python /app/ragpicker/ragpicker.py -p 1 -d /app/ragpicker/tools/
