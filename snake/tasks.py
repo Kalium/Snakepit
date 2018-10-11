@@ -11,7 +11,6 @@ import json
 import CuckooAPI
 import time
 from celery import Celery
-#from urllib.parse import urlparse
 from urlparse import urlparse
 
 app = Celery('tasks', )
@@ -75,6 +74,7 @@ def fanout(sha256):
     getDataByHash.delay(sha256)
     submitToCuckoo.delay(sha256)
 
+
 @app.task(throws=(requests.HTTPError))
 def throwInPit(sha256):
     """Save the blob."""
@@ -83,7 +83,10 @@ def throwInPit(sha256):
 
     resp = requests.post(pit_url + 'item', data=json.dumps(i),
                          headers=post_headers)
-    resp.raise_for_status()
+    if resp.status_code is not 400:
+        # "Bad Request" means a unique item violation, which means it's already
+        # there. Move on!
+        resp.raise_for_status()
 
 
 @app.task(name="snakepit.analysis.viperData", throws=(requests.HTTPError))
@@ -102,8 +105,9 @@ def getDataByHash(sha256):
 def getCuckooApiInstance():
     """Return a functional CuckooAPI instance."""
     parsed = urlparse(cuckoo_url)
-    if cuckoo_pass != None:
-        return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https", user=cuckoo_user, passwd=cuckoo_pass)
+    if cuckoo_pass is not None:
+        return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https",
+                                   user=cuckoo_user, passwd=cuckoo_pass)
     else:
         return CuckooAPI.CuckooAPI(host=parsed.hostname, proto="https")
 
@@ -122,9 +126,6 @@ def submitToCuckoo(sha256):
 
     api = getCuckooApiInstance()
     resp = api.submitfile(sha256)
-    print resp
-    print resp['data']['task_ids']
-    # return resp['task_id']
     pollCuckoo.delay(sha256, resp['data']['task_ids'])
 
 
