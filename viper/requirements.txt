@@ -1,4 +1,4 @@
-Django==1.9.2
+Django>=1.11.18
 SQLAlchemy==1.0.11
 beautifulsoup4==4.4.1
 bitstring==3.1.4
@@ -9,7 +9,6 @@ enum34==1.1.2
 idna==2.0
 ipaddress==1.0.16
 olefile==0.42.1
-#oletools==0.41
 pbkdf2==1.3
 pyasn1==0.1.9
 pycparser==2.14
@@ -23,8 +22,8 @@ pypssl==2.1
 python-dateutil==2.4.2
 python-magic==0.4.10
 r2pipe==0.8.0
-requests==2.11.1
-requests-cache==0.4.10
+requests
+requests-cache
 scandir==1.2
 six==1.10.0
 terminaltables==2.1.0
