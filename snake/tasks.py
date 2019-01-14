@@ -11,12 +11,15 @@ import json
 import CuckooAPI
 import time
 from celery import Celery
+from celery.utils.log import get_task_logger
 from urlparse import urlparse
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')
 app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
                         'snakepit.scoring.*': {'queue': 'scoring'}}
+
+logger = get_task_logger(__name__)
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
 cuckoo_url = os.getenv('CUCKOO_HOST', 'http://cuckoo:8080/')
@@ -87,6 +90,8 @@ def throwInPit(sha256):
         # "Bad Request" means a unique item violation, which means it's already
         # there. Move on!
         resp.raise_for_status()
+    elif resp.status_code is 400:
+        logger.info('Item ' + sha256 + ' is a duplicate of a known item')
 
 
 @app.task(name="snakepit.analysis.viperData", throws=(requests.HTTPError))
