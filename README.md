@@ -7,7 +7,7 @@ Snakepit is a docker-enabled framework for analysis and triage of binaries in a 
 We all need hobbies.
 
 ## Notes
-* Added a small API CLI tool for Viper which should come in use since we aren't running the web interface.
+* Added a small API CLI tool for Viper which should come into use since we aren't running the web interface.
 * No oletools in viper. Not a big loss here.
 * At this point you'll have to run the ragpicker container manually. I suggest mounting a volume and feeding it directories. If you look at ragpicker/Dockerfile, you'll see an example of this.
 * Resetting a score for re-analysis is left as an exercise. handler's `saveScore` shows how to do it.
