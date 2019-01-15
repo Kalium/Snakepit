@@ -6,7 +6,7 @@ bottle==0.12.9
 cffi>=1.5.0
 dnspython==1.12.0
 enum34==1.1.2
-idna==2.0
+idna
 ipaddress==1.0.16
 olefile==0.42.1
 pbkdf2==1.3
