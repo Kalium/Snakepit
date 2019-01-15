@@ -86,11 +86,11 @@ def throwInPit(sha256):
 
     resp = requests.post(pit_url + 'item', data=json.dumps(i),
                          headers=post_headers)
-    if resp.status_code is not 400:
+    if resp.status_code != requests.codes.bad_request:
         # "Bad Request" means a unique item violation, which means it's already
         # there. Move on!
         resp.raise_for_status()
-    elif resp.status_code is 400:
+    elif resp.status_code == requests.codes.bad_request:
         logger.info('Item ' + sha256 + ' is a duplicate of a known item')
 
 
