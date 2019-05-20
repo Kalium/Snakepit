@@ -1,6 +1,5 @@
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y python-pip git curl
-RUN pip install --upgrade pip
+FROM python:latest
+RUN apt-get update && apt-get install -y git curl
 
 COPY requirements.txt /app/handler/requirements.txt
 RUN pip install -r /app/handler/requirements.txt

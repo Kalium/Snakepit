@@ -1,6 +1,5 @@
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y python-pip git python-dev libpq-dev
-RUN pip install --upgrade pip
+FROM python:latest
+RUN apt-get update && apt-get install -y git python-dev libpq-dev libyaml-dev libyaml-0-2
 
 COPY requirements.txt /app/pit/requirements.txt
 RUN pip install -r /app/pit/requirements.txt

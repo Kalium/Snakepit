@@ -1,11 +1,16 @@
 version: '2.1'
 services:
   redis:
-    image: redis:latest
+    build: ./redis
+    healthcheck:
+      test: ["CMD-SHELL", "docker-healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   viper-db:
     image: postgres:latest
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U viper"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -15,7 +20,7 @@ services:
   pit-db:
     image: postgres:latest
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U pit"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,12 +29,21 @@ services:
       POSTGRES_USER: pit
   flower:
     build: ./flower
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DATABASE: 0
     depends_on:
       - redis
     ports:
      - "5555:5555"
   viper:
     build: ./viper
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5556:8080"
       - "5559:9090"
@@ -46,6 +60,11 @@ services:
     build: ./pit
     environment:
       PIT_DB: postgresql://pit:pit@pit-db:5432/pit
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5000/item"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       pit-db:
         condition: service_healthy

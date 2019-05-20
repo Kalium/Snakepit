@@ -12,7 +12,7 @@ import CuckooAPI
 import time
 from celery import Celery
 from celery.utils.log import get_task_logger
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')

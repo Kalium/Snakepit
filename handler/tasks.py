@@ -13,7 +13,7 @@ from celery import Celery
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')
-pit_url = string.rstrip(os.getenv('PIT_URL', 'http://pit:5000/'), '/')
+pit_url = os.getenv('PIT_URL', 'http://pit:5000/').rstrip('/')
 post_headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 

@@ -1,3 +1,3 @@
 celery[redis]
 requests
--e git://github.com/K4lium/cuckoo-api.git#egg=cuckoo-api
+cuckoo-api

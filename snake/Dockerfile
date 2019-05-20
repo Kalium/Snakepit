@@ -1,6 +1,5 @@
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y python-pip git
-RUN pip install --upgrade pip
+FROM python:latest
+RUN apt-get update && apt-get install -y git curl
 
 COPY requirements.txt /app/snake/requirements.txt
 RUN pip install -r /app/snake/requirements.txt

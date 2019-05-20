@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-RUN apt-get update && apt-get install -y libfuzzy-dev python-pip git libssl-dev libffi-dev swig libpq-dev python-dev
+RUN apt-get update && apt-get install -y libfuzzy-dev python-pip git libssl-dev libffi-dev swig libpq-dev python-dev curl
 RUN pip install --upgrade pip
 
 COPY . /app/viper/
