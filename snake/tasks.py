@@ -134,10 +134,7 @@ def submitToCuckoo(sha256):
 
     api = getCuckooApiInstance()
     resp = api.submitfile(sha256)
-<<<<<<< HEAD
     # return resp['task_id']
-=======
->>>>>>> 666e7ff667f6d0b2ec9b30d7b326d1ecd3e79c5b
     pollCuckoo.delay(sha256, resp['data']['task_ids'])
 
 

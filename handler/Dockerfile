@@ -1,9 +1,12 @@
 FROM python:latest
 RUN apt-get update && apt-get install -y git curl
 
-COPY requirements.txt /app/handler/requirements.txt
-RUN pip install -r /app/handler/requirements.txt
-COPY . /app/handler/
+RUN groupadd -r handler && useradd --no-log-init -r -g handler handler -d /app/handler
+WORKDIR /app/handler
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . /app/handler
 RUN chmod +x /app/handler/rules.sh
+USER handler
 
-CMD /app/handler/rules.sh && cd /app/handler && celery worker -Q scoring --loglevel info -E
+CMD ./rules.sh && celery worker -Q scoring --loglevel info -E

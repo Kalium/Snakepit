@@ -8,7 +8,6 @@ import re
 import os
 import requests
 import json
-import string
 from celery import Celery
 
 app = Celery('tasks', )

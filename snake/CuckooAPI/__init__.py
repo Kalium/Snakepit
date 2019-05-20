@@ -20,7 +20,7 @@ def main():
 #
 # Static Functions
 #
-def buildapiurl(proto="http", host="127.0.0.1", 
+def buildapiurl(proto="http", host="127.0.0.1",
                 action=None):
     """
     Create a URL for the Cuckoo API
@@ -45,7 +45,8 @@ class CuckooAPI(object):
     """
     Class to hold Cuckoo API data.
     """
-    def __init__(self, host="127.0.0.1", proto="http", 
+
+    def __init__(self, host="127.0.0.1", proto="http",
                  user=None, passwd=None):
         """
 
@@ -71,7 +72,7 @@ class CuckooAPI(object):
         # Build the URL
         apiurl = buildapiurl(self.proto, self.host,
                              "/cuckoo/status")
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -90,7 +91,7 @@ class CuckooAPI(object):
         apiurl = buildapiurl(self.proto, self.host,
                              "/machines/list")
 
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -110,10 +111,10 @@ class CuckooAPI(object):
         if vmname is None:
             raise CuckooAPINoVM(vmname)
 
-        apiurl = buildapiurl(self.proto, self.host, 
-                             "/machines/view/"+vmname)
+        apiurl = buildapiurl(self.proto, self.host,
+                             "/machines/view/" + vmname)
 
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -134,13 +135,13 @@ class CuckooAPI(object):
         # Build the URL
         baseurl = "/tasks/list"
         if limit is not None:
-            baseurl = baseurl+"/"+str(limit)
+            baseurl = baseurl + "/" + str(limit)
             if offset is not None:
-                baseurl = baseurl+"/"+str(offset)
+                baseurl = baseurl + "/" + str(offset)
 
-        apiurl = buildapiurl(self.proto, self.host, 
+        apiurl = buildapiurl(self.proto, self.host,
                              baseurl)
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -160,10 +161,10 @@ class CuckooAPI(object):
         if taskid is None or taskid < 1:
             raise CuckooAPINoTaskID(taskid)
 
-        apiurl = buildapiurl(self.proto, self.host, 
-                             "/tasks/view/"+str(taskid))
+        apiurl = buildapiurl(self.proto, self.host,
+                             "/tasks/view/" + str(taskid))
 
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -185,16 +186,16 @@ class CuckooAPI(object):
         # Build the URL
         if taskid is None or taskid < 1:
             raise CuckooAPINoTaskID(taskid)
-        
+
         taskid = ''.join([str(i) for i in taskid])
-        apiurl = buildapiurl(self.proto, self.host,
-                             "/tasks/get/report/"+str(taskid)+"/"+reportformat)
+        outfile = "/tasks/get/report/" + str(taskid) + "/" + reportformat
+        apiurl = buildapiurl(self.proto, self.host, outfile)
 
         # Error on any other format for now...
         if reportformat != "json":
             raise CuckooAPINotImplemented(apiurl)
 
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -218,15 +219,15 @@ class CuckooAPI(object):
         if taskid is None or taskid < 1:
             raise CuckooAPINoTaskID
         taskid = ''.join([str(i) for i in taskid])
-        apiurl = buildapiurl(self.proto, self.host, "/tasks/status/"+taskid)
-        if self.user == None and self.passwd == None:
+        apiurl = buildapiurl(self.proto, self.host, "/tasks/status/" + taskid)
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
 
         jsonreply = json.loads(request.text)
         return jsonreply
-    
+
     def taskdelete(self, taskid=None):
         """
         Delete a task.
@@ -239,9 +240,9 @@ class CuckooAPI(object):
             raise CuckooAPINoTaskID(taskid)
 
         apiurl = buildapiurl(self.proto, self.host,
-                             "/tasks/delete/"+str(taskid))
+                             "/tasks/delete/" + str(taskid))
 
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
@@ -271,20 +272,21 @@ class CuckooAPI(object):
         if filepath is None or os.path.exists(filepath):
             raise CuckooAPIFileExists(filepath)
 
-        filepath = filepath+".zip"
+        filepath = filepath + ".zip"
 
-        baseurl = "/tasks/screenshots/"+str(taskid)
+        baseurl = "/tasks/screenshots/" + str(taskid)
         if screenshot is not None:
-            baseurl = baseurl+"/"+str(screenshot)
+            baseurl = baseurl + "/" + str(screenshot)
 
         apiurl = buildapiurl(self.proto, self.host,
                              baseurl)
 
         # Turn on stream to download files
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl, stream=True)
         else:
-            request = requests.get(apiurl, stream=True, auth=(self.user, self.passwd))
+            request = requests.get(apiurl, stream=True,
+                                   auth=(self.user, self.passwd))
 
         with open(filepath, 'wb') as f:
             # Read and write in chunks
@@ -306,8 +308,11 @@ class CuckooAPI(object):
 
         """
         # Error if the file does not exist
-        if (filepath is None or not os.path.exists(filepath) or
-                not os.path.isfile(filepath)):
+        if (filepath is None):
+            raise CuckooAPIInvalidFileException(filepath)
+        if(not os.path.exists(filepath)):
+            raise CuckooAPIInvalidFileException(filepath)
+        if(not os.path.isfile(filepath)):
             raise CuckooAPIInvalidFileException(filepath)
 
         # Build the URL
@@ -318,10 +323,13 @@ class CuckooAPI(object):
             # multipart_file = {"file": ("temp_file_name", sample)}
             multipart_file = {"file": (os.path.basename(filepath), sample)}
 
-            if self.user == None and self.passwd == None:
-                request = requests.post(apiurl, files=multipart_file, data=data)
+            if self.user is None and self.passwd is None:
+                request = requests.post(
+                    apiurl, files=multipart_file, data=data)
             else:
-                request = requests.post(apiurl, files=multipart_file, data=data, auth=(self.user, self.passwd))
+                request = requests.post(
+                    apiurl, files=multipart_file, data=data,
+                    auth=(self.user, self.passwd))
 
         jsonreply = json.loads(request.text)
         return jsonreply
@@ -344,10 +352,14 @@ class CuckooAPI(object):
                              "/tasks/create/url")
 
         multipart_url = {"url": ("", url)}
-        if self.user == None and self.passwd == None:
-            request = requests.post(apiurl, files=multipart_url, data=data, auth=(self.user, self.passwd))
+        if self.user is None and self.passwd is None:
+            request = requests.post(
+                apiurl, files=multipart_url, data=data,
+                auth=(self.user, self.passwd))
         else:
-            request = reqiests.post(apiurl, files=multipart_url, data=data, auth=(self.user, self.passwd))
+            request = requests.post(
+                apiurl, files=multipart_url, data=data,
+                auth=(self.user, self.passwd))
         jsonreply = json.loads(request.text)
         return jsonreply
 
@@ -370,12 +382,12 @@ class CuckooAPI(object):
 
         # Build the URL
         apiurl = buildapiurl(self.proto, self.host,
-                             "/files/view/"+hashtype+"/"+hashid)
+                             "/files/view/" + hashtype + "/" + hashid)
 
         if hashtype != "md5" and hashtype != "id" and hashtype != "sha256":
             raise CuckooAPINotAvailable(apiurl)
-        if self.user == None and self.passwd == None:
-            request = requests.get(apiur)
+        if self.user is None and self.passwd is None:
+            request = requests.get(apiurl)
         else:
             request = requests.get(apiurl, auth=(self.user, self.passwd))
 
@@ -397,16 +409,17 @@ class CuckooAPI(object):
         if filepath is None or os.path.exists(filepath):
             raise CuckooAPIFileExists(filepath)
 
-        baseurl = "/files/get/"+hashid
+        baseurl = "/files/get/" + hashid
 
         apiurl = buildapiurl(self.proto, self.host,
                              baseurl)
 
         # Turn on stream to download files
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl, stream=True)
         else:
-            request = requests.get(apiurl, stream=True, auth=(self.user, self.passwd))
+            request = requests.get(apiurl, stream=True,
+                                   auth=(self.user, self.passwd))
 
         with open(filepath, 'wb') as f:
             # Read and write in chunks
@@ -428,16 +441,17 @@ class CuckooAPI(object):
         if filepath is None or os.path.exists(filepath):
             raise CuckooAPIFileExists(filepath)
 
-        baseurl = "/pcap/get/"+str(taskid)
+        baseurl = "/pcap/get/" + str(taskid)
 
         apiurl = buildapiurl(self.proto, self.host,
                              baseurl)
 
         # Turn on stream to download files
-        if self.user == None and self.passwd == None:
+        if self.user is None and self.passwd is None:
             request = requests.get(apiurl, stream=True)
         else:
-            request = requests.get(apiurl, stream=True, auth=(self.user, self.passwd))
+            request = requests.get(apiurl, stream=True,
+                                   auth=(self.user, self.passwd))
 
         with open(filepath, 'wb') as f:
             # Read and write in chunks
@@ -450,6 +464,7 @@ class CuckooAPIInvalidFileException(Exception):
     """
     Exception for when a file is not found.
     """
+
     def __init__(self, filepath):
         Exception.__init__(self, "CuckooAPI: Invalid File {0}".format(
                            filepath))
@@ -459,6 +474,7 @@ class CuckooAPINotImplemented(Exception):
     """
     Exception for when a call is not implemented, but is available.
     """
+
     def __init__(self, apicall):
         Exception.__init__(self,
                            "CuckooAPI: Not Implemented {}".format(apicall))
@@ -470,6 +486,7 @@ class CuckooAPINotAvailable(Exception):
     This signifies you may have used an API call meant for the Django
     interface and sent it to the api.py interface, or vice versa.
     """
+
     def __init__(self, apicall):
         Exception.__init__(self, "CuckooAPI: This API is not available for "
                            "your target Cuckoo server.  Are you mixing "
@@ -481,6 +498,7 @@ class CuckooAPIBadRequest(Exception):
     """
     Exception for when a Cuckoo machine is not found.
     """
+
     def __init__(self, apiurl):
         Exception.__init__(self, "CuckooAPI:  Unable to connect "
                            "with URL {0}  Are you mixing "
@@ -493,6 +511,7 @@ class CuckooAPINoVM(Exception):
     """
     Exception for when a vm is not found.
     """
+
     def __init__(self, vmname):
         Exception.__init__(self, "CuckooAPI:  VM {0} not available or invalid!"
                            .format(vmname))
@@ -502,6 +521,7 @@ class CuckooAPINoTaskID(Exception):
     """
     Exception for when an invalid task ID is used.
     """
+
     def __init__(self, taskid):
         Exception.__init__(self, "CuckooAPI:  Task ID {0} not avilable or "
                            "invalid!".format(taskid))
@@ -511,6 +531,7 @@ class CuckooAPITaskNoDelete(Exception):
     """
     Exception for when a task cannot be deleted.
     """
+
     def __init__(self, taskid):
         Exception.__init__(self, "CuckooAPI: Task ID {0} cannot be "
                            "deleted!".format(taskid))
@@ -520,6 +541,7 @@ class CuckooAPINoHash(Exception):
     """
     Exception for when an invalid file hash is used.
     """
+
     def __init__(self, hashid, hashtype):
         Exception.__init__(self, "CuckooAPI:  Hash {0} of type {1} not "
                            "available or invalid!".format(hashid, hashtype))
@@ -530,9 +552,11 @@ class CuckooAPIFileExists(Exception):
     Exception for when a file is about to be saved over an existing file
     or the file name is invalid.
     """
+
     def __init__(self, filepath):
         Exception.__init__(self, "CuckooAPI: {0} already exists or "
                            "is invalid!".format(filepath))
+
 
 #
 # Call main if run as a script

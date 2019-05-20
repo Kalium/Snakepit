@@ -33,8 +33,14 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_DATABASE: 0
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5555/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     ports:
      - "5555:5555"
   viper:
@@ -55,7 +61,8 @@ services:
     environment:
       BROKER_URL: redis://redis:6379/0
     depends_on:
-      - viper
+      viper:
+          condition: service_healthy
   pit:
     build: ./pit
     environment:
@@ -77,9 +84,12 @@ services:
       PIT_URL: http://pit:5000/
       VIPER_URL: http://viper:8080/
     depends_on:
-      - redis
-      - pit
-      - viper
+      redis:
+        condition: service_healthy
+      pit:
+        condition: service_healthy
+      viper:
+        condition: service_healthy
   handler:
       build: ./handler
       environment:
@@ -87,9 +97,12 @@ services:
         PIT_URL: http://pit:5000/
         VIPER_URL: http://viper:8080/
       depends_on:
-        - redis
-        - pit
-        - viper
+        redis:
+          condition: service_healthy
+        pit:
+          condition: service_healthy
+        viper:
+          condition: service_healthy
   swagger:
     image: schickling/swagger-ui:latest
     depends_on:
