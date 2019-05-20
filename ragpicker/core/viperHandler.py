@@ -101,8 +101,8 @@ class ViperHandler():
                     return False
                 if str(i) == "default":
                     for v in check[i]:
-                        for d in v:
-                            if str(d) == md5:
+                        if 'md5' in v:
+                            if v['md5'] == md5:
                                 log.info("File " + md5 + " is in Viper")
                                 return True
             log.info("File " + sha256 + " is not in Viper")
@@ -113,10 +113,12 @@ class ViperHandler():
                     return False
                 if str(i) == "default":
                     for v in check[i]:
-                        for d in v:
-                            if str(d) == sha256:
+                        log.info(v)
+                        if 'sha256' in v:
+                            if v['sha256'] == sha256:
                                 log.info("File " + sha256 + " is in Viper")
                                 return True
+
             log.info("File " + sha256 + " is not in Viper")
             return False
         else:

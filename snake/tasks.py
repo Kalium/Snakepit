@@ -11,12 +11,15 @@ import json
 import CuckooAPI
 import time
 from celery import Celery
+from celery.utils.log import get_task_logger
 from urlparse import urlparse
 
 app = Celery('tasks', )
 app.config_from_object('celeryconfig')
 app.conf.task_routes = {'snakepit.analysis.*': {'queue': 'analysis'},
                         'snakepit.scoring.*': {'queue': 'scoring'}}
+
+logger = get_task_logger(__name__)
 pit_url = os.getenv('PIT_URL', 'http://pit:5000/')
 viper_url = os.getenv('VIPER_URL', 'http://viper:8080/')
 cuckoo_url = os.getenv('CUCKOO_HOST', '')
@@ -83,7 +86,12 @@ def throwInPit(sha256):
 
     resp = requests.post(pit_url + 'item', data=json.dumps(i),
                          headers=post_headers)
-    resp.raise_for_status()
+    if resp.status_code != requests.codes.bad_request:
+        # "Bad Request" means a unique item violation, which means it's already
+        # there. Move on!
+        resp.raise_for_status()
+    elif resp.status_code == requests.codes.bad_request:
+        logger.info('Item ' + sha256 + ' is a duplicate of a known item')
 
 
 @app.task(name="snakepit.analysis.viperData", throws=(requests.HTTPError))
@@ -126,7 +134,10 @@ def submitToCuckoo(sha256):
 
     api = getCuckooApiInstance()
     resp = api.submitfile(sha256)
+<<<<<<< HEAD
     # return resp['task_id']
+=======
+>>>>>>> 666e7ff667f6d0b2ec9b30d7b326d1ecd3e79c5b
     pollCuckoo.delay(sha256, resp['data']['task_ids'])
 
 
